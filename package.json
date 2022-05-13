@@ -1,0 +1,15 @@
+{
+  "name": "serverless_websockets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1133.0",
+    "sanitize-html": "^2.7.0"
+  }
+}
