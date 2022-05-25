@@ -9,6 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-cdk/aws-apigatewayv2": "^1.156.1",
+    "@aws-cdk/core": "^1.156.1",
+    "aws-cdk": "^2.24.1",
+    "aws-cdk-lib": "^2.24.1",
     "aws-sdk": "^2.1133.0",
     "sanitize-html": "^2.7.0"
   }

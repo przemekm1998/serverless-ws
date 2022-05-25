@@ -12,5 +12,5 @@ import { loadEnvSettings } from "../lib/settings";
 
   const app = new cdk.App();
 
-  // new EnvComponentsStack(app, getStackName("ComponentsStack", envSettings.projectEnvName), { envSettings });
+  new EnvComponentsStack(app, getStackName("ComponentsStack", envSettings.projectEnvName), { envSettings });
 })
