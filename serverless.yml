@@ -1,71 +1,106 @@
 service: websocket-chat
 
+custom:
+  projectEnvName: "${env:PROJECT_NAME}-${env:ENV_STAGE}"
+  confFile:
+    dev: serverless.config.yml
 
 provider:
   name: aws
   runtime: nodejs12.x
-  stackName: ${self:service}-${self:provider.stage}
-  stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - "execute-api:ManageConnections"
-      Resource:
-        - "arn:aws:execute-api:*:*:**/@connections/*"
-    - Effect: Allow
-      Action:
-        - "dynamodb:PutItem"
-        - "dynamodb:GetItem"
-        - "dynamodb:UpdateItem"
-        - "dynamodb:DeleteItem"
-        - "dynamodb:BatchGetItem"
-        - "dynamodb:BatchWriteItem"
-        - "dynamodb:Query"
-      Resource:
-         - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
-         - Fn::Join:
-            - '/'
-            - - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
-              - '*'
-  environment:
-    APPLICATION_TABLE:
-      Ref: ApplicationDynamoDBTable
-    API_REGION: "${self:provider.region}"
+  versionFunctions: false
+  stage: ${opt:stage, 'local'}
+  region: "${env:AWS_DEFAULT_REGION}"
+  stackName: ${file(${self:custom.confFile.${self:provider.stage}}):stackName}
+  iamRoleStatements: ${file(${self:custom.confFile.${self:provider.stage}}):iam}
+  environment: ${file(${self:custom.confFile.${self:provider.stage}}):environment}
+  apiGateway:
+    websocketApiId: ${file(${self:custom.confFile.${self:provider.stage}}):websocketApiId}
 
-  websocketsApiName: websocket-chat-${self:provider.stage}
-  websocketsApiRouteSelectionExpression: $request.body.action
+  #provider:
+#  name: aws
+#  runtime: nodejs12.x
+#  stackName: ${self:service}-${self:provider.stage}
+#  stage: ${opt:stage, 'dev'}
+#  region: ${opt:region, 'us-east-1'}
+#  iamRoleStatements:
+#    - Effect: Allow
+#      Action:
+#        - "execute-api:ManageConnections"
+#      Resource:
+#        - "arn:aws:execute-api:*:*:**/@connections/*"
+#    - Effect: Allow
+#      Action:
+#        - "dynamodb:PutItem"
+#        - "dynamodb:GetItem"
+#        - "dynamodb:UpdateItem"
+#        - "dynamodb:DeleteItem"
+#        - "dynamodb:BatchGetItem"
+#        - "dynamodb:BatchWriteItem"
+#        - "dynamodb:Query"
+#      Resource:
+#         - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
+#         - Fn::Join:
+#            - '/'
+#            - - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
+#              - '*'
 
 functions:
   connect:
     handler: src/handlers.connect
+    timeout: 30
+    memorySize: 256
+    environment: ${file(${self:custom.confFile.${self:provider.stage}}):WebSocketsHandler.environment}
+    vpc: ${file(${self:custom.cpmfFile.${self:provider.stage}}):vpc}
     events:
       - websocket:
           route: $connect
 
   disconnect:
     handler: src/handlers.disconnect
+    timeout: 30
+    memorySize: 256
+    environment: ${file(${self:custom.confFile.${self:provider.stage}}):WebSocketsHandler.environment}
+    vpc: ${file(${self:custom.cpmfFile.${self:provider.stage}}):vpc}
     events:
       - websocket:
           route: $disconnect
 
   sendMessage:
     handler: src/handlers.sendMessage
+    timeout: 30
+    memorySize: 256
+    environment: ${file(${self:custom.confFile.${self:provider.stage}}):WebSocketsHandler.environment}
+    vpc: ${file(${self:custom.cpmfFile.${self:provider.stage}}):vpc}
     events:
        - websocket:
            route: sendMessage
 
   subscribeChannel:
     handler: src/handlers.subscribeChannel
+    timeout: 30
+    memorySize: 256
+    environment: ${file(${self:custom.confFile.${self:provider.stage}}):WebSocketsHandler.environment}
+    vpc: ${file(${self:custom.cpmfFile.${self:provider.stage}}):vpc}
     events:
        - websocket:
            route: subscribeChannel 
 
   unsubscribeChannel:
     handler: src/handlers.unsubscribeChannel
+    timeout: 30
+    memorySize: 256
+    environment: ${file(${self:custom.confFile.${self:provider.stage}}):WebSocketsHandler.environment}
+    vpc: ${file(${self:custom.cpmfFile.${self:provider.stage}}):vpc}
     events:
       - websocket:
           route: unsubscribeChannel
+
+package:
+  exclude:
+    - .git/**
+    - node_modules/**
+    - aws/**
 
 resources: 
   Resources:
