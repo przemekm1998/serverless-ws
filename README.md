@@ -5,8 +5,13 @@
 - Lambda
 - DynamoDB
 
+# Deployment
+- `aws-vault exec <profile> --` - access AWS profile
+- `make bootstrap` - bootstrap cdk infra
+- `make deploy` - deploy cdk infra
+- `sls deploy` - deploy serverless functions
+
 # Usage
-- `sls deploy` - to deploy to cloud
   
  - `npm i -g wscat` - to install WebSocket cat
 
