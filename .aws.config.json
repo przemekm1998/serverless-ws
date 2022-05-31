@@ -1,0 +1,7 @@
+{
+  "projectName": "ws",
+  "defaultEnv": "dev",
+  "webAppConfig": {
+    "envVariables": {}
+  }
+}

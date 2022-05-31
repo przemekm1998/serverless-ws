@@ -32,7 +32,7 @@ export interface EnvConfigFileContent {
 
 
 export async function loadEnvSettings(): Promise<EnvironmentSettings> {
-  const projectName = process.env.PROJECT_NAME;
+  const projectName = process.env.PROJECT_NAME!;
   const envStage = process.env.ENV_STAGE;
 
   if (!envStage) {
@@ -50,7 +50,7 @@ export async function loadEnvSettings(): Promise<EnvironmentSettings> {
     envStage: envStage,
     projectName: projectName,
     projectEnvName: `${projectName}-${envStage}`,
-    projectRootDir: process.env.PROJECT_ROOT_DIR,
+    projectRootDir: process.env.PROJECT_ROOT_DIR!,
     webAppEnvVariables: {
       ...(baseConfig?.webAppConfig?.envVariables || {}),
       ...(envConfig?.webAppConfig?.envVariables || {})
@@ -60,8 +60,8 @@ export async function loadEnvSettings(): Promise<EnvironmentSettings> {
 
 
 async function readConfig(): Promise<ConfigFileContent> {
-  const configFileName = `.awsboilerplate.json`;
-  const configFilePath = path.join(process.env.PROJECT_ROOT_DIR, configFileName);
+  const configFileName = `.aws.config.json`;
+  const configFilePath = path.join(process.env.PROJECT_ROOT_DIR!, configFileName);
 
   try {
     await fs.stat(configFilePath);
@@ -78,8 +78,8 @@ async function readConfig(): Promise<ConfigFileContent> {
 
 
 async function readEnvConfig(envStage: string): Promise<EnvConfigFileContent> {
-  const envConfigFileName = `.awsboilerplate.${envStage}.json`;
-  const envConfigFilePath = path.join(process.env.PROJECT_ROOT_DIR, envConfigFileName);
+  const envConfigFileName = `.aws.config.${envStage}.json`;
+  const envConfigFilePath = path.join(process.env.PROJECT_ROOT_DIR!, envConfigFileName);
 
   try {
     await fs.stat(envConfigFilePath);

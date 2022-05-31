@@ -1,9 +1,8 @@
-import {StackProps} from '@aws-cdk/core';
+import {StackProps, CfnOutput} from '@aws-cdk/core';
 import {EnvConstructProps} from "../../../types";
 import * as core from '@aws-cdk/core';
 import {WebSocketApi, WebSocketStage} from "@aws-cdk/aws-apigatewayv2";
 import {EnvironmentSettings} from '../../../settings';
-import {CfnOutput} from 'aws-cdk-lib';
 
 
 export interface EnvComponentsStackProps extends StackProps, EnvConstructProps {

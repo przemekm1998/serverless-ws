@@ -1,0 +1,44 @@
+stackName: "${env:PROJECT_NAME}-${self:provider.stage}"
+
+iam:
+  - Effect: "Allow"
+    Action:
+      - "execute-api:ManageConnections"
+    Resource: "*"
+
+  - Effect: Allow
+    Action:
+      - "dynamodb:PutItem"
+      - "dynamodb:GetItem"
+      - "dynamodb:UpdateItem"
+      - "dynamodb:DeleteItem"
+      - "dynamodb:BatchGetItem"
+      - "dynamodb:BatchWriteItem"
+      - "dynamodb:Query"
+    Resource:
+       - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
+       - Fn::Join:
+          - '/'
+          - - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
+            - '*'
+
+environment:
+  ENVIRONMENT_NAME: ${self:provider.stage}
+
+WebSocketsHandler:
+  environment:
+    ENVIRONMENT_NAME: ${self:provider.stage}
+
+vpc:
+  securityGroupIds:
+    - Fn::ImportValue: "${self:custom.projectEnvName}-lambdaSecurityGroupId"
+  subnetIds:
+    - Fn::ImportValue: "${self:custom.projectEnvName}-privateSubnetOneId"
+    - Fn::ImportValue: "${self:custom.projectEnvName}-privateSubnetTwoId"
+
+websocketApiId: { Fn::ImportValue: "${self:custom.projectEnvName}-webSocketApiId" }
+
+APPLICATION_TABLE:
+  Ref: ApplicationDynamoDBTable
+
+API_REGION: "${self:provider.region}"
